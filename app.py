@@ -1,23 +1,6 @@
 import cv2 as cv
 import numpy as np
-
 import gradio as gr
-
-
-def generate_sky_mask(image):
-    """
-    description: generates a mask for the sky
-    parameters: mask: numpy.ndarray, image_height: int
-    returns: sky_mask: numpy.ndarray
-    """
-    height = image.shape[0]
-    contours, _ = cv.findContours(image, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
-    white_board = np.zeros_like(image)
-    for i in contours:
-        _,y,_,_ = cv.boundingRect(i)
-        if (y < height * 0.1):
-            cv.drawContours(white_board, [i], -1, (255), thickness=cv.FILLED)
-    return white_board
 
 def generate_edge(image):
     """
@@ -42,6 +25,21 @@ def detect_dark(image):
     gray = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
     ret, thresh = cv.threshold(gray, 20, 255, cv.THRESH_BINARY)
     return thresh
+
+def generate_sky_mask(image):
+    """
+    description: generates a mask for the sky
+    parameters: mask: numpy.ndarray, image_height: int
+    returns: sky_mask: numpy.ndarray
+    """
+    height = image.shape[0]
+    contours, _ = cv.findContours(image, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
+    white_board = np.zeros_like(image)
+    for i in contours:
+        _,y,_,_ = cv.boundingRect(i)
+        if (y < height * 0.1):
+            cv.drawContours(white_board, [i], -1, (255), thickness=cv.FILLED)
+    return white_board
 
 def run(image):
     """
